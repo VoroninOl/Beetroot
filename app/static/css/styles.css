@@ -55,6 +55,16 @@
     border-color: #001ed1
 }
 
+.new-msg{
+    background-color: #d1ab00; 
+    border-color: #d1ab00
+}
+
+.new-msg:focus{
+    background-color: #d1ab00; 
+    border-color: #d1ab00
+}
+
 
 /* Id elements */
 

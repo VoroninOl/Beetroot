@@ -1,4 +1,47 @@
 
+// Functions
+
+function updateUsersInGraph(){
+    let nodes = []
+    for (const user of chat.chatUsers){
+        nodes.push({data: {id: user, name: 'user'}})
+    }
+    cy.add(nodes)
+    for (const node of cy.nodes()){
+        if (!chat.chatUsers.includes(node.id()) && node.data().name!='msg'){
+            cy.remove(node)
+        }
+    }
+    cy.nodes('[name = "user"]').layout({
+        name: 'circle',
+        fit: true,
+        animate: true,
+    }).run()
+}
+
+
+function updateChatsInGraph(sender, receiver){
+    if (cy.edges('#' + sender + receiver).length === 0){
+        const edge = {data: {id: sender + receiver, source: sender, target: receiver}}
+        cy.add(edge)
+    }
+    let x = cy.nodes('#' + sender).position().x
+    let y = cy.nodes('#' + sender).position().y
+    const msg = cy.add({data: { name: 'msg' }, position: {
+        x: x,
+        y: y
+    }})
+    msg.animate({
+        position: cy.nodes('#' + receiver).position()
+    },
+    {
+        duration: 900
+    })
+    setTimeout(() => {
+        cy.remove(msg)
+      }, 900)
+}
+
 
 // Vue JS
 const chat = new Vue({
@@ -9,15 +52,21 @@ const chat = new Vue({
         chatMessages: [],
         mainChat: [],
         userChats: [],
+        newMessages: [],
         chatInput: '',
         choosenChat: 'General chat',
     },
+    watch: {
+        chatUsers: updateUsersInGraph
+    },
     methods: {
-        updateMessages: (mainChat, userChats) => {
-            chat.mainChat = mainChat
-            if (userChats){
-                chat.userChats = userChats
+        updateMessages: (data) => {
+            chat.chatUsers = data.chatUsers
+            chat.mainChat = data.chatHistory
+            if (data.userChats){
+                chat.userChats = data.userChats
             }
+            chat.updateChatMessages()
         },
         updateChatMessages: () => {
             if (chat.choosenChat === 'General chat'){
@@ -27,15 +76,18 @@ const chat = new Vue({
                 chat.chatMessages = chat.userChats[chat.choosenChat]
             }
         },
-        updateUsers: (data) => {
-            chat.chatUsers = data
+        markNewMessage: (user) => {
+            if (chat.choosenChat !== user){
+                chat.newMessages.push(user)
+            }
         },
-        changeUserChat: (data) => {
-            chat.choosenChat = data
+        changeUserChat: (user) => {
+            chat.choosenChat = user
             chat.updateChatMessages()
-        },
-        updateUserChats: (data) => {
-            
+            const userIndex = chat.newMessages.indexOf(user)
+            if (userIndex !== -1) {
+                chat.newMessages.splice(userIndex, 1)
+            }
         },
         sendMessage: () => {
             if (chat.chatInput.length > 0){
@@ -46,6 +98,53 @@ const chat = new Vue({
     }
 })
 
+
+// Cytoscape
+
+const cy = cytoscape({
+    container: $('#div-graph'),
+    elements: {
+        nodes: [],
+        edges: [],
+    },
+    style: [ // the stylesheet for the graph
+        {
+            selector: 'node',
+            style: {
+                'background-color': '#666',
+                'label': 'data(id)'
+            }
+        },
+
+        {
+            selector: '[name = "msg"]',
+            style: {
+                'height': '20px',
+                'width': '35px',
+                'background-color': '#666',
+                'label': 'data(name)',
+                'shape': 'rectangle'
+            }
+        },
+
+        {
+            selector: 'edge',
+            style: {
+                'width': 3,
+                'line-color': '#ccc',
+                'target-arrow-color': '#ccc',
+                'target-arrow-shape': 'triangle',
+                'curve-style': 'bezier'
+            }
+        }
+    ],
+
+    layout: {
+        name: 'circle',
+        fit: true,
+        animate: true,
+    }
+})
 
 // Sockets
 
@@ -59,17 +158,17 @@ socket.on('connect', () => {
 socket.on('message', data => {
     console.log(data)
     if (!data.privateMsgTo){
-        chat.updateUsers(data.chatUsers)
-        chat.updateMessages(data.chatHistory, data.userChats)
-        chat.updateChatMessages()
+        chat.updateMessages(data)
     }
     else if (data.privateMsgTo === username || data.privateMsgFrom === username){
         socket.send({'event': 'updateUserChat'})
+        updateChatsInGraph(data.privateMsgFrom, data.privateMsgTo)
+        if (username === data.privateMsgTo){
+            chat.markNewMessage(data.privateMsgFrom)
+        }
     }
-    
+    else{
+        updateChatsInGraph(data.privateMsgFrom, data.privateMsgTo)
+    }
 })
-
-
-
-
 

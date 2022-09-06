@@ -1,9 +1,8 @@
-import random
 from flask import render_template, session, redirect, url_for, request, flash
 from flask_socketio import send
+from datetime import datetime
 
 from app import app, socketio
-# from app import app, login_manager
 
 
 def update_user_chat(first_user, second_user, data):
@@ -19,11 +18,14 @@ def update_user_chat(first_user, second_user, data):
     :return: None
     """
     if first_user not in user_chats:
-        user_chats[first_user] = {second_user: [{'username': data['username'], 'msg': data['msg']}]}
+        user_chats[first_user] = {second_user: [{'username': data['username'], 'msg': data['msg'],
+                                                 'time': datetime.utcnow().strftime('%H:%M:%S')}]}
     elif second_user not in user_chats[first_user]:
-        user_chats[first_user][second_user] = [{'username': data['username'], 'msg': data['msg']}]
+        user_chats[first_user][second_user] = [{'username': data['username'], 'msg': data['msg'],
+                                                'time': datetime.utcnow().strftime('%H:%M:%S')}]
     else:
-        user_chats[first_user][second_user].append({'username': data['username'], 'msg': data['msg']})
+        user_chats[first_user][second_user].append({'username': data['username'], 'msg': data['msg'],
+                                                    'time': datetime.utcnow().strftime('%H:%M:%S')})
 
 
 users = set()
@@ -47,7 +49,8 @@ def login_page():
         if username:
             session['username'] = username
             users.add(username)
-            chat_hist.append({'username': 'Chat Events', 'msg': 'User "{}" joined chat!'.format(username)})
+            chat_hist.append({'username': 'Chat Events', 'msg': 'User "{}" joined chat!'.format(username),
+                              'time': datetime.utcnow().strftime('%H:%M:%S')})
             data = {'chatHistory': chat_hist, 'chatUsers': list(users)}
             socketio.send(data)
             return redirect(url_for('index'))
@@ -64,7 +67,9 @@ def logout():
     except Exception as ex:
         print('Error in user logging out | {}'.format(ex))
     session.pop('username', None)
-    chat_hist.append({'username': 'Chat Events', 'msg': 'User "{}" left chat!'.format(username)})
+    user_chats.pop(username)
+    chat_hist.append({'username': 'Chat Events', 'msg': 'User "{}" left chat!'.format(username),
+                      'time': datetime.utcnow().strftime('%H:%M:%S')})
     data = {'chatHistory': chat_hist, 'chatUsers': list(users)}
     socketio.send(data)
     return redirect(url_for('login_page'))
@@ -72,9 +77,6 @@ def logout():
 
 @socketio.on('message')
 def handle_message(data):
-    print(data)
-    # messages = {i: random.randint(5, 30) for i in range(15)}
-    # data =
     if data['event'] == 'logged':
         username = session.get('username')
         users.add(username)
@@ -82,7 +84,8 @@ def handle_message(data):
         send(data, broadcast=True)
     elif data['event'] == 'message':
         if data['receiver'] == 'General chat':
-            chat_hist.append({'username': data['username'], 'msg': data['msg']})
+            chat_hist.append({'username': data['username'], 'msg': data['msg'],
+                              'time': datetime.utcnow().strftime('%H:%M:%S')})
             data = {'chatHistory': chat_hist, 'chatUsers': list(users)}
             send(data, broadcast=True)
         else:
@@ -99,3 +102,14 @@ def handle_message(data):
         # check if need check user in dict
         data = {'chatHistory': chat_hist, 'userChats': user_chats[username], 'chatUsers': list(users)}
         send(data)
+
+
+@socketio.on('disconnect')
+def handle_disconnect():
+    username = session.get('username')
+    try:
+        users.remove(username)
+    except Exception as ex:
+        print('Error in user logging out | {}'.format(ex))
+    data = {'chatHistory': chat_hist, 'chatUsers': list(users)}
+    socketio.send(data)
