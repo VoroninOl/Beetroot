@@ -7,27 +7,39 @@ const chat = new Vue({
     data: {
         chatUsers: [],
         chatMessages: [],
+        mainChat: [],
         userChats: [],
         chatInput: '',
-        chosenChat: 'General chat',
+        choosenChat: 'General chat',
     },
-    updated: setNamesListener,
     methods: {
-        updateMessages: (data) => {
-            chat.chatMessages = data
+        updateMessages: (mainChat, userChats) => {
+            chat.mainChat = mainChat
+            if (userChats){
+                chat.userChats = userChats
+            }
+        },
+        updateChatMessages: () => {
+            if (chat.choosenChat === 'General chat'){
+                chat.chatMessages = chat.mainChat
+            }
+            else {
+                chat.chatMessages = chat.userChats[chat.choosenChat]
+            }
         },
         updateUsers: (data) => {
             chat.chatUsers = data
         },
         changeUserChat: (data) => {
-            chat.chosenChat = data
+            chat.choosenChat = data
+            chat.updateChatMessages()
         },
         updateUserChats: (data) => {
             
         },
         sendMessage: () => {
             if (chat.chatInput.length > 0){
-                socket.send({'event': 'generalMessage', 'username': username, 'msg': chat.chatInput})
+                socket.send({'event': 'message', 'username': username, 'msg': chat.chatInput, 'receiver': chat.choosenChat})
                 chat.chatInput = ''
             }
         }
@@ -46,9 +58,15 @@ socket.on('connect', () => {
 
 socket.on('message', data => {
     console.log(data)
-    chat.updateUsers(data.chatUsers)
-    chat.updateMessages(data.chatHistory)
-    // setNamesListener()
+    if (!data.privateMsgTo){
+        chat.updateUsers(data.chatUsers)
+        chat.updateMessages(data.chatHistory, data.userChats)
+        chat.updateChatMessages()
+    }
+    else if (data.privateMsgTo === username || data.privateMsgFrom === username){
+        socket.send({'event': 'updateUserChat'})
+    }
+    
 })
 
 

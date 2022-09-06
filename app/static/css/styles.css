@@ -35,6 +35,26 @@
     display: inline-block
 }
 
+.def{
+    background-color: #0d6efd;
+    border-color: #0d6efd'
+}
+
+.def:focus{
+    background-color: #001ed1;
+    border-color: #001ed1
+}
+
+.choosen{
+    background-color: #001ed1; 
+    border-color: #001ed1
+}
+
+.choosen:focus{
+    background-color: #001ed1; 
+    border-color: #001ed1
+}
+
 
 /* Id elements */
 
@@ -102,14 +122,4 @@
 
 p{
     margin-bottom: 0;
-}
-
-.def{
-    background-color: #0d6efd;
-    border-color: #0d6efd'
-}
-
-.choosen{
-    background-color: #001ed1; 
-    border-color: #001ed1
 }

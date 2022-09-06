@@ -22,8 +22,8 @@
         <div id="div-chat" class="half-block">
             <div id="chat-room">
               <button id="main-chat" @click="changeUserChat('General chat')" 
-                :class="[chosenChat === 'General chat' ? 'choosen' : 'def', 'chat-name chat-name btn btn-primary']">General chat</button>
-              <button v-for="user in chatUsers" :class="[chosenChat === user ? 'choosen' : 'def', 'chat-name chat-name btn btn-primary']"
+                :class="[choosenChat === 'General chat' ? 'choosen' : 'def', 'chat-name chat-name btn btn-primary']">General chat</button>
+              <button v-for="user in chatUsers" :class="[choosenChat === user ? 'choosen' : 'def', 'chat-name chat-name btn btn-primary']"
                 @click="changeUserChat(user)">[[user]]</button>
             </div>
             <div id="chat-content">

@@ -5,8 +5,30 @@ from flask_socketio import send
 from app import app, socketio
 # from app import app, login_manager
 
+
+def update_user_chat(first_user, second_user, data):
+    """
+    Function to append new messages to user chat storage
+
+    :param first_user: First user to update
+    :type first_user: str
+    :param second_user: Second user to update
+    :type second_user: str
+    :param data: Data that received from socket message (used to record properly sender of message)
+    :type data: dict
+    :return: None
+    """
+    if first_user not in user_chats:
+        user_chats[first_user] = {second_user: [{'username': data['username'], 'msg': data['msg']}]}
+    elif second_user not in user_chats[first_user]:
+        user_chats[first_user][second_user] = [{'username': data['username'], 'msg': data['msg']}]
+    else:
+        user_chats[first_user][second_user].append({'username': data['username'], 'msg': data['msg']})
+
+
 users = set()
 chat_hist = []
+user_chats = {}
 
 
 # Route of main page
@@ -58,9 +80,22 @@ def handle_message(data):
         users.add(username)
         data = {'chatHistory': chat_hist, 'chatUsers': list(users)}
         send(data, broadcast=True)
-    elif data['event'] == 'generalMessage':
-        chat_hist.append({'username': data['username'], 'msg': data['msg']})
+    elif data['event'] == 'message':
+        if data['receiver'] == 'General chat':
+            chat_hist.append({'username': data['username'], 'msg': data['msg']})
+            data = {'chatHistory': chat_hist, 'chatUsers': list(users)}
+            send(data, broadcast=True)
+        else:
+            username = data['username']
+            receiver = data['receiver']
+            update_user_chat(username, receiver, data)
+            if username != receiver:
+                update_user_chat(receiver, username, data)
+            data = {'chatHistory': chat_hist, 'chatUsers': list(users), 'privateMsgTo': receiver,
+                    'privateMsgFrom': username}
+            send(data, broadcast=True)
+    elif data['event'] == 'updateUserChat':
         username = session.get('username')
-        data = {'chatHistory': chat_hist, 'chatUsers': list(users)}
-        send(data, broadcast=True)
-
+        # check if need check user in dict
+        data = {'chatHistory': chat_hist, 'userChats': user_chats[username], 'chatUsers': list(users)}
+        send(data)
