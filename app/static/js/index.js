@@ -110,7 +110,7 @@ const cy = cytoscape({
 
 // Sockets
 
-const socket = io.connect('http://127.0.0.1:5000')
+const socket = io.connect(`http://${window.location.hostname}`)
 const username = $('#username').text()
 
 // Message on connection
