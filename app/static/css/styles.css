@@ -27,10 +27,6 @@
     border: 1px rgb(0, 0, 0, 50%) solid;
 }
 
-.chat-message{
-    /* white-space: pre-line;  */
-}
-
 .header-text{
     display: inline-block
 }

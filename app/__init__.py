@@ -1,13 +1,13 @@
 from flask import Flask
 from flask_socketio import SocketIO
 from flask_sqlalchemy import SQLAlchemy
-# import app.pyfiles.config as cfg
+from app.pyfiles.config import secret
 
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.sqlite3'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db/messages.sqlite3'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SECRET_KEY'] = 'my_secret_key'
+app.config['SECRET_KEY'] = secret
 
 app.config['DEBUG'] = True
 

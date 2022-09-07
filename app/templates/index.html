@@ -15,39 +15,41 @@
       crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </head>
 <body>
+    <!-- Header -->
     <div id="header" class="bg-dark text-light">
-      <h1 class='header-text'>Beetroot |</h1> 
-      <h2 class='header-text'>Welcome, </h2>
-      <h2 id="username" class='header-text'>{{username}}</h2>
-      <a id="logout" href="/logout" class="btn btn-primary">Logout</a>
+        <h1 class='header-text'>Beetroot |</h1>
+        <h2 class='header-text'>Welcome, </h2>
+        <h2 id="username" class='header-text'>{{username}}</h2>
+        <a id="logout" href="/logout" class="btn btn-primary">Logout</a>
     </div>
     <!--  Main div -->
     <div class="main-block">
+        <!-- div for chat on Vue.js -->
         <div id="div-chat" class="half-block">
             <div id="chat-room">
-              <button id="main-chat" @click="changeUserChat('General chat')" 
-                :class="[choosenChat === 'General chat' ? 'choosen' : 'def', 'chat-name chat-name btn btn-primary']">General chat</button>
-              <button v-for="user in chatUsers" :class="[choosenChat === user ? 'choosen' : 'def', newMessages.includes(user) ? 'new-msg' : '', 'chat-name chat-name btn btn-primary']"
-                @click="changeUserChat(user)">[[user]]</button>
+                <button id="main-chat" @click="changeUserChat('General chat')"
+                  :class="[choosenChat === 'General chat' ? 'choosen' : 'def', 'chat-name chat-name btn btn-primary']">General chat</button>
+                <button v-for="user in chatUsers" :class="[choosenChat === user ? 'choosen' : 'def', newMessages.includes(user) ? 'new-msg' : '', 'chat-name chat-name btn btn-primary']"
+                  @click="changeUserChat(user)">[[user]]</button>
             </div>
             <div id="chat-content">
-              <ul>
-                <li v-for="message in chatMessages" class="chat-message">
-                  <strong v-if="message.username == 'Chat Events'">[[message.msg]]</strong>
-                  <p v-else>[[message.time]] - [[message.username]]: [[message.msg]]</p>
-                </li>
-              </ul>
+                <ul>
+                    <li v-for="message in chatMessages" class="chat-message">
+                        <strong v-if="message.username == 'Chat Events'">[[message.msg]]</strong>
+                        <p v-else>[[message.time]] - [[message.username]]: [[message.msg]]</p>
+                    </li>
+                </ul>
             </div>
             <div id="send-block">
-              <input id="chat-input" v-on:keyup.enter="sendMessage" v-model="chatInput">
-              <button id="btn-send" @click="sendMessage" class="btn btn-primary">Send</button>
+                <input id="chat-input" v-on:keyup.enter="sendMessage" v-model="chatInput">
+                <button id="btn-send" @click="sendMessage" class="btn btn-primary">Send</button>
             </div>
         </div>
-        <div id="div-graph" class="half-block">
-
-        </div>
+        <!-- div for cytoscape graph -->
+        <div id="div-graph" class="half-block"></div>
     </div>
-
+    <!-- Importing JS scripts -->
+    <script src="{{url_for('static', filename='js/functions.js')}}"></script>
     <script src="{{url_for('static', filename='js/index.js')}}"></script>
 </body>
 </html>

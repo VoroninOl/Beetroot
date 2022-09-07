@@ -1,47 +1,4 @@
 
-// Functions
-
-function updateUsersInGraph(){
-    let nodes = []
-    for (const user of chat.chatUsers){
-        nodes.push({data: {id: user, name: 'user'}})
-    }
-    cy.add(nodes)
-    for (const node of cy.nodes()){
-        if (!chat.chatUsers.includes(node.id()) && node.data().name!='msg'){
-            cy.remove(node)
-        }
-    }
-    cy.nodes('[name = "user"]').layout({
-        name: 'circle',
-        fit: true,
-        animate: true,
-    }).run()
-}
-
-
-function updateChatsInGraph(sender, receiver){
-    if (cy.edges('#' + sender + receiver).length === 0){
-        const edge = {data: {id: sender + receiver, source: sender, target: receiver}}
-        cy.add(edge)
-    }
-    let x = cy.nodes('#' + sender).position().x
-    let y = cy.nodes('#' + sender).position().y
-    const msg = cy.add({data: { name: 'msg' }, position: {
-        x: x,
-        y: y
-    }})
-    msg.animate({
-        position: cy.nodes('#' + receiver).position()
-    },
-    {
-        duration: 900
-    })
-    setTimeout(() => {
-        cy.remove(msg)
-      }, 900)
-}
-
 
 // Vue JS
 const chat = new Vue({
@@ -60,6 +17,7 @@ const chat = new Vue({
         chatUsers: updateUsersInGraph
     },
     methods: {
+        // Updating info in chats
         updateMessages: (data) => {
             chat.chatUsers = data.chatUsers
             chat.mainChat = data.chatHistory
@@ -68,6 +26,7 @@ const chat = new Vue({
             }
             chat.updateChatMessages()
         },
+        // Shows messages of choosen chat
         updateChatMessages: () => {
             if (chat.choosenChat === 'General chat'){
                 chat.chatMessages = chat.mainChat
@@ -76,11 +35,13 @@ const chat = new Vue({
                 chat.chatMessages = chat.userChats[chat.choosenChat]
             }
         },
+        // Changing class to mark new messages
         markNewMessage: (user) => {
             if (chat.choosenChat !== user){
                 chat.newMessages.push(user)
             }
         },
+        // Changing opened chat
         changeUserChat: (user) => {
             chat.choosenChat = user
             chat.updateChatMessages()
@@ -89,6 +50,7 @@ const chat = new Vue({
                 chat.newMessages.splice(userIndex, 1)
             }
         },
+        // Sending message to server
         sendMessage: () => {
             if (chat.chatInput.length > 0){
                 socket.send({'event': 'message', 'username': username, 'msg': chat.chatInput, 'receiver': chat.choosenChat})
@@ -151,23 +113,28 @@ const cy = cytoscape({
 const socket = io.connect('http://127.0.0.1:5000')
 const username = $('#username').text()
 
+// Message on connection
 socket.on('connect', () => {
     socket.send({'event': 'logged'})
 })
 
+// Handler of message receiving 
 socket.on('message', data => {
-    console.log(data)
+    // Checks it is message to general chat
     if (!data.privateMsgTo){
         chat.updateMessages(data)
     }
+    // Checks if user is sender of receiver of message
     else if (data.privateMsgTo === username || data.privateMsgFrom === username){
         socket.send({'event': 'updateUserChat'})
         updateChatsInGraph(data.privateMsgFrom, data.privateMsgTo)
+        // Marking new message in chat if user is reveiver
         if (username === data.privateMsgTo){
             chat.markNewMessage(data.privateMsgFrom)
         }
     }
     else{
+        // Updates edges in graph and plays animation of message
         updateChatsInGraph(data.privateMsgFrom, data.privateMsgTo)
     }
 })
