@@ -14,7 +14,7 @@ const chat = new Vue({
         choosenChat: 'General chat',
     },
     watch: {
-        chatUsers: updateUsersInGraph
+        chatUsers: updateUsersInGraph,
     },
     methods: {
         // Updating info in chats
@@ -23,6 +23,10 @@ const chat = new Vue({
             chat.mainChat = data.chatHistory
             if (data.userChats){
                 chat.userChats = data.userChats
+            }
+            if (data.onlineChats){
+                updateUsersInGraph()
+                initAllEdgesInGraph(data.onlineChats)
             }
             chat.updateChatMessages()
         },
@@ -64,7 +68,7 @@ const chat = new Vue({
 // Cytoscape
 
 const cy = cytoscape({
-    container: $('#div-graph'),
+    container: $('#cy'),
     elements: {
         nodes: [],
         edges: [],
@@ -73,7 +77,10 @@ const cy = cytoscape({
         {
             selector: 'node',
             style: {
-                'background-color': '#666',
+                'background-color': '#FEF8ED',
+                'background-image': 'url(static/images/smile.png)',
+                'background-height': '80%',
+                'background-width': '80%',
                 'label': 'data(id)'
             }
         },
@@ -83,7 +90,8 @@ const cy = cytoscape({
             style: {
                 'height': '20px',
                 'width': '35px',
-                'background-color': '#666',
+                'background-image': 'url(static/images/email.png)',
+                'background-color': '#FEF8ED',
                 'label': 'data(name)',
                 'shape': 'rectangle'
             }
@@ -93,8 +101,8 @@ const cy = cytoscape({
             selector: 'edge',
             style: {
                 'width': 3,
-                'line-color': '#ccc',
-                'target-arrow-color': '#ccc',
+                'line-color': '#FEF8ED',
+                'target-arrow-color': '#FEF8ED',
                 'target-arrow-shape': 'triangle',
                 'curve-style': 'bezier'
             }

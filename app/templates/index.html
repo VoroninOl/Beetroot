@@ -1,55 +1,47 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Chat Room</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" 
-      integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
-    <link rel="stylesheet" href="{{url_for('static', filename='css/styles.css')}}">
+
+{% extends 'mainBase.html' %}
+
+
+{% block libs %}
+    <link rel="stylesheet" href="{{url_for('static', filename='css/chat-styles.css')}}">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
     <script src="https://cdn.socket.io/4.5.0/socket.io.min.js" integrity="sha384-7EyYLQZgWBi67fBtVxw60/OWl1kjsfrPFcaU0pp0nAh+i8FD068QogUvg85Ewy1k" 
-      crossorigin="anonymous"></script>
+    crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.22.1/cytoscape.min.js" 
-      integrity="sha512-KTe+SDYh8ExHDmrSZuoKkFoFQDSU3ywInRi9SkE0ENpJu72GS+UAxd/l0CAXF8DaGGGOLKd7wKRoa7mEirvIpg==" 
-      crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-</head>
-<body>
-    <!-- Header -->
-    <div id="header" class="bg-dark text-light">
-        <h1 class='header-text'>Beetroot |</h1>
-        <h2 class='header-text'>Welcome, </h2>
-        <h2 id="username" class='header-text'>{{username}}</h2>
-        <a id="logout" href="/logout" class="btn btn-primary">Logout</a>
-    </div>
-    <!--  Main div -->
-    <div class="main-block">
-        <!-- div for chat on Vue.js -->
-        <div id="div-chat" class="half-block">
-            <div id="chat-room">
-                <button id="main-chat" @click="changeUserChat('General chat')"
-                  :class="[choosenChat === 'General chat' ? 'choosen' : 'def', 'chat-name chat-name btn btn-primary']">General chat</button>
-                <button v-for="user in chatUsers" :class="[choosenChat === user ? 'choosen' : 'def', newMessages.includes(user) ? 'new-msg' : '', 'chat-name chat-name btn btn-primary']"
-                  @click="changeUserChat(user)">[[user]]</button>
+    integrity="sha512-KTe+SDYh8ExHDmrSZuoKkFoFQDSU3ywInRi9SkE0ENpJu72GS+UAxd/l0CAXF8DaGGGOLKd7wKRoa7mEirvIpg==" 
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+{% endblock %}
+
+
+{% block addButtons %}
+    <div id="div-account">
+        <div style="display: flex; align-items: center;">
+            <div id="div-img-account">
+                <img id="img-account" src="{{url_for('static', filename='images/account.png')}}">
             </div>
-            <div id="chat-content">
-                <ul>
-                    <li v-for="message in chatMessages" class="chat-message">
-                        <strong v-if="message.username == 'Chat Events'">[[message.msg]]</strong>
-                        <p v-else>[[message.time]] - [[message.username]]: [[message.msg]]</p>
-                    </li>
-                </ul>
-            </div>
-            <div id="send-block">
-                <input id="chat-input" v-on:keyup.enter="sendMessage" v-model="chatInput">
-                <button id="btn-send" @click="sendMessage" class="btn btn-primary">Send</button>
-            </div>
+                <label>Account</label>
+                <img class="dropdown-arrow" src="{{url_for('static', filename='images/arrow-down.png')}}">
         </div>
-        <!-- div for cytoscape graph -->
-        <div id="div-graph" class="half-block"></div>
+        <div id="dropdown-account">
+            <label id="username">{{username}}</label>
+            <a id="logout" href="/logout">Logout</a>
+        </div>
     </div>
-    <!-- Importing JS scripts -->
+{% endblock %}
+
+
+{% block mainPlace %}
+    <div id="div-chat">
+        {% include 'components/x-users.html' %}
+        {% include 'components/x-chat.html' %}
+    </div>
+    {% include 'components/x-graph.html' %}
+{% endblock %}
+
+
+
+{% block scripts %}
     <script src="{{url_for('static', filename='js/functions.js')}}"></script>
     <script src="{{url_for('static', filename='js/index.js')}}"></script>
-</body>
-</html>
+{% endblock %}

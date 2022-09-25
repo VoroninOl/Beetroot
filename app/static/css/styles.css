@@ -1,119 +1,94 @@
 
-/* Classes */
 
-.main-block{
-    display: flex;
+/* Main styles */
+
+a, p, label{
+    font-family: 'Montserrat';
+    font-style: normal;
+    font-weight: 400;
+    color: #000000;
 }
 
-.half-block{
-    position: relative;
-    display: inline-block;
-    width: calc(50% - 20px);
-    height: 500px;
-    margin-top: 10px;
-    margin-bottom: 10px;
-    margin-left: 10px;
-    margin-right: 10px;
-    box-shadow: 0 0 10px rgb(0 0 0 / 50%)
-}
-
-.chat-name{
-    display: inline-block;
-    /* width: 100px; */
-    height: 35px;
-    margin-left: 5px;
-    margin-right: 5px;
-    /* background-color: aqua; */
-    border: 1px rgb(0, 0, 0, 50%) solid;
-}
-
-.header-text{
-    display: inline-block
-}
-
-.def{
-    background-color: #0d6efd;
-    border-color: #0d6efd'
-}
-
-.def:focus{
-    background-color: #001ed1;
-    border-color: #001ed1
-}
-
-.choosen{
-    background-color: #001ed1; 
-    border-color: #001ed1
-}
-
-.choosen:focus{
-    background-color: #001ed1; 
-    border-color: #001ed1
-}
-
-.new-msg{
-    background-color: #d1ab00; 
-    border-color: #d1ab00
-}
-
-.new-msg:focus{
-    background-color: #d1ab00; 
-    border-color: #d1ab00
-}
-
-
-/* Id elements */
-
-#chat-room{
-    padding: 5px;
-    height: 70px;
-    width: 100%;
-    border-bottom: 1px rgb(0, 0, 0, 50%) solid;
-    overflow-x: auto;
-    white-space: nowrap;
-}
-
-#chat-content{
-    width: 100%;
-    height: calc(100% - 90px);
-    overflow-y: scroll;
-    overflow-x: hidden;
-    display: flex; 
-    flex-direction: column-reverse;
-    /* white-space: nowrap; */
-}
-
-#send-block{
-    position: absolute;
-    height: 40px;
-    bottom: 0px;
-    width: calc(100% - 20px);
-    margin-left: 10px;
-    margin-right: 10px;
-}
-
-#chat-input{
-    width: calc(100% - 82px);
-}
-
-#header{
-    width: calc(100% - 20px);
-    height: 60px;
-    margin: 10px;
-    padding: 5px;
-    border-radius: 10px;
-}
+/* Styles for login block */
 
 #login-block{
-    width: fit-content;
-    height: fit-content;
+    position: absolute;
+    top: 180px;
+    background: #C9E7F9;
+    left: 35%;
+    right: 35%;
     padding: 10px;
-    margin-top: 40px;
+    padding-bottom: 30px;
     margin-left: auto;
     margin-right: auto;
-    border-radius: 10px;
+    border-radius: 25px;
     box-shadow: 0 0 10px rgb(0 0 0 / 50%)
 }
+
+#header-login-block{
+    display: block;
+    font-weight: 500;
+    font-size: 30px;
+    line-height: 39px;
+    text-align: center;
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+.login-warning{
+    background: #f05858; 
+    border-radius: 25px;
+    margin-top: 5px;
+    margin-bottom: 10px;
+}
+
+.flashed-message{
+    display: block; 
+    font-weight: 500;
+    font-size: 20px;
+    line-height: 34px;
+    text-align: center;
+}
+
+.login-item{
+    font-weight: 500;
+    font-size: 20px;
+    line-height: 34px;
+    text-align: center;
+    margin-right: 10px;
+}
+
+.login-input{
+    background: #FEF8ED; 
+    border-radius: 25px;
+    height: 25px;
+    width: calc(100% - 10px);
+    font-size: 18px;
+    line-height: 29px;
+    
+}
+
+#login-submit{
+    display: block;
+    width: 50%;
+    height: 40px;
+    margin-top: 10px;
+    background: #69C7FC;
+    box-shadow: 0px 0px 25px rgba(55, 125, 230, 0.5);
+    border-radius: 25px;
+    font-weight: 500;
+    font-size: 24px;
+    line-height: 39px;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+    border-width: 0;
+}
+
+#login-submit:hover{
+    background: #3ab6fd;
+}
+
 
 #login-form{
     margin-left: auto;
@@ -124,8 +99,159 @@
     float: right;
 }
 
-/* Elements */
+/* Styles for header */
 
-p{
-    margin-bottom: 0;
+#header{
+    position: absolute;
+    height: 133px;
+    left: 7.4%;
+    right: 7.4%;
+    top: 13px;
+    background: #C9E7F9;
+    box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.25);
+    border-radius: 50px;
+}
+
+#logo{
+    position: absolute;
+    height: 60px;
+    left: 2.38%;
+    right: 78.97%;
+    top: 37px;
+}
+
+#div-logo-img{
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    left: 0px;
+    top: 0px;
+    
+    background: #FEF8ED;
+    box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.25);
+    border-radius: 15px;
+}
+
+#div-logo-img img{
+    position: absolute;
+    width: 51px;
+    height: 51px;
+    left: 5px;
+    top: 6px;
+}
+
+
+#header-label{
+    position: absolute;
+    width: 237px;
+    height: 39px;
+    left: 68px;
+    top: 10px;
+    font-weight: 700;
+    font-size: 32px;
+    line-height: 39px;
+}
+
+
+#div-info{
+    position: absolute;
+    height: 34px;
+    left: 35%;
+    right: 50.%;
+    top: 53px;
+}
+
+#div-info label{
+    font-size: 28px;
+    line-height: 34px;
+}
+
+.dropdown-arrow{
+    position: relative;
+    width: 20px;
+    top: 3px;
+}
+
+#dropdown-info{
+    display: none;
+    position: absolute;
+    background: #FEF8ED;
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.5);
+    border-radius: 15px;
+    width: 25rem;
+    padding: 10px;
+    z-index: 1;
+}
+
+#dropdown-info p{
+    font-size: 14px;
+    line-height: 22px;
+}
+
+#div-info:hover #dropdown-info {display: block;}
+
+/* Styles for footer */
+
+#bottom{
+    position: absolute;
+    left: 0px;
+    right: 0px;
+    top: 800px;
+    height: 169px;
+    background: #C9E7F9;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.25);
+}
+
+#div-authors{
+    position: absolute;
+    height: 77px;
+    left: 8.49%;
+    top: 29px;
+}
+
+#div-code{
+    position: absolute;
+    height: 130px;
+    left: 33.59%;
+    top: 29px;
+}
+
+#div-contacts{
+    position: absolute;
+    height: 131px;
+    left: 67.34%;
+    top: 29px;
+}
+
+.bottom-header{
+    width: 102px;
+    height: 25px;
+    left: 0px;
+    top: 0px;
+    font-weight: 700;
+    font-size: 20px;
+    line-height: 29px;
+    margin-bottom: 10px;
+}
+
+.bottom-label{
+    position: absolute;
+    font-size: 18px;
+    line-height: 29px;
+}
+
+#first-author{
+    position: absolute;
+    width: 180px;
+    height: 29px;
+    left: 0px;
+    top: 48px;
+}
+
+#bottom img{
+    width: 32px;
+    height: 32px;
+    margin-right: 5px;
+    left: 0px;
+    top: 0px;
 }

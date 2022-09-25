@@ -2,7 +2,7 @@
 
 // Functions
 
-
+// Function to update users in graph (adds new ones, deletes exited users)
 function updateUsersInGraph(){
     let nodes = []
     for (const user of chat.chatUsers){
@@ -18,15 +18,14 @@ function updateUsersInGraph(){
         name: 'circle',
         fit: true,
         animate: true,
+        radius: 50 + 5*cy.nodes().length,
     }).run()
 }
 
 
+// Function to create edge beetwen users and animate message
 function updateChatsInGraph(sender, receiver){
-    if (cy.edges('#' + sender + receiver).length === 0){
-        const edge = {data: {id: sender + receiver, source: sender, target: receiver}}
-        cy.add(edge)
-    }
+    createChatEdgeInGraph(sender, receiver)
     let x = cy.nodes('#' + sender).position().x
     let y = cy.nodes('#' + sender).position().y
     const msg = cy.add({data: { name: 'msg' }, position: {
@@ -42,4 +41,23 @@ function updateChatsInGraph(sender, receiver){
     setTimeout(() => {
         cy.remove(msg)
       }, 900)
+}
+
+
+// Function to create new edge beetwen users
+function createChatEdgeInGraph(sender, receiver){
+    if (cy.edges('#' + sender + receiver).length === 0){
+        const edge = {data: {id: sender + receiver, source: sender, target: receiver}}
+        cy.add(edge)
+    }
+}
+
+
+// Function to initialize all edges
+function initAllEdgesInGraph(usersChats){
+    for (const sender in usersChats){
+        for (const reciever of usersChats[sender]){
+            createChatEdgeInGraph(sender, reciever)
+        }
+    }
 }

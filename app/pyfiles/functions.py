@@ -34,6 +34,7 @@ def get_chat_history():
     """
     sql_list = Message.query.all()[-chat_length:]
     history = [msg.get_info() for msg in sql_list]
+    history.reverse()
     return history
 
 

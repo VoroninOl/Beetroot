@@ -1,0 +1,24 @@
+
+<div id="div-chat-box">
+    <label id="header-chat">Chat name</label>
+    <div id="div-chat-content">
+        <div v-for="message in chatMessages" class="div-message">
+            <div v-if="message.username != 'Chat Events'" class="smile">
+                <img src="{{url_for('static', filename='images/smile.png')}}">
+            </div>
+            <div v-if="message.username != 'Chat Events'" class="div-message-content">
+                <label>[[message.username]]:</label>
+                <label>[[message.msg]]</label>
+            </div>
+            <div v-else class="div-message-content-event">
+                <label class="username">[[message.msg]]</label>
+            </div>
+        </div>
+    </div>
+    <div id="div-chat-input">
+        <input id="input-message" v-on:keyup.enter="sendMessage" v-model="chatInput" placeholder="Message...">
+        <button id="btn-send" @click="sendMessage">
+            <img src="{{url_for('static', filename='images/send.png')}}">
+        </button>
+    </div>
+</div>

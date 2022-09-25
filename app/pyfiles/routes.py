@@ -5,7 +5,7 @@ from app import app, socketio
 from app.pyfiles.functions import *
 
 
-users = set()
+users = []
 user_chats = {}
 
 
@@ -24,15 +24,20 @@ def login_page():
     if request.method == 'POST':
         username = request.form.get('login')
         if username:
+            if username in users:
+                flash('User already in chat!')
+                return render_template('login.html')
             session['username'] = username
-            users.add(username)
+            users.append(username)
             add_msg_to_db('Chat Events', 'User "{}" joined chat!'.format(username))
             chat_hist = get_chat_history()
-            data = {'chatHistory': chat_hist, 'chatUsers': list(users)}
+            data = {'chatHistory': chat_hist, 'chatUsers': list(set(users))}
             socketio.send(data)
             return redirect(url_for('index'))
         flash('Enter login!')
         return render_template('login.html')
+    if session.get('username') in users:
+        return redirect(url_for('index'))
     return render_template('login.html')
 
 
@@ -47,7 +52,7 @@ def logout():
         user_chats.pop(username)
     add_msg_to_db('Chat Events', 'User "{}" left chat!'.format(username))
     chat_hist = get_chat_history()
-    data = {'chatHistory': chat_hist, 'chatUsers': list(users)}
+    data = {'chatHistory': chat_hist, 'chatUsers': list(set(users))}
     socketio.send(data)
     return redirect(url_for('login_page'))
 
@@ -58,9 +63,10 @@ def handle_message(data):
     # Event on login
     if data['event'] == 'logged':
         username = session.get('username')
-        users.add(username)
+        users.append(username)
         chat_hist = get_chat_history()
-        data = {'chatHistory': chat_hist, 'chatUsers': list(users)}
+        data = {'chatHistory': chat_hist, 'chatUsers': list(set(users)),
+                'onlineChats': {user: list(user_chats[user]) for user in user_chats}}
         send(data, broadcast=True)
     # Event on sending message
     elif data['event'] == 'message':
@@ -68,7 +74,7 @@ def handle_message(data):
         if data['receiver'] == 'General chat':
             add_msg_to_db(data['username'], data['msg'])
             chat_hist = get_chat_history()
-            data = {'chatHistory': chat_hist, 'chatUsers': list(users)}
+            data = {'chatHistory': chat_hist, 'chatUsers': list(set(users))}
             send(data, broadcast=True)
         # Sending message to user
         else:
@@ -79,14 +85,14 @@ def handle_message(data):
             if username != receiver:
                 update_user_chat(receiver, username, data, user_chats)
             chat_hist = get_chat_history()
-            data = {'chatHistory': chat_hist, 'chatUsers': list(users), 'privateMsgTo': receiver,
+            data = {'chatHistory': chat_hist, 'chatUsers': list(set(users)), 'privateMsgTo': receiver,
                     'privateMsgFrom': username}
             send(data, broadcast=True)
     # Event to update data of private chats
     elif data['event'] == 'updateUserChat':
         username = session.get('username')
         chat_hist = get_chat_history()
-        data = {'chatHistory': chat_hist, 'userChats': user_chats[username], 'chatUsers': list(users)}
+        data = {'chatHistory': chat_hist, 'userChats': user_chats[username], 'chatUsers': list(set(users))}
         send(data)
 
 
@@ -97,5 +103,5 @@ def handle_disconnect():
     if username in users:
         users.remove(username)
     chat_hist = get_chat_history()
-    data = {'chatHistory': chat_hist, 'chatUsers': list(users)}
+    data = {'chatHistory': chat_hist, 'chatUsers': list(set(users))}
     socketio.send(data)

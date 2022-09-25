@@ -1,0 +1,15 @@
+
+<div id="div-online-users">
+    <label id="header-users">Online users</label>
+    <div id="div-users-btns">
+            <button id="main-chat" @click="changeUserChat('General chat')"
+                :class="[choosenChat === 'General chat' ? 'btn-chosen-chat' : '', 'btn-user']">
+                <label>General chat</label>
+            </button>
+            
+            <button v-for="user in chatUsers" :class="[choosenChat === user ? 'btn-chosen-chat' : '', newMessages.includes(user) ? 'btn-new-message' : '', 'btn-user']"
+                @click="changeUserChat(user)">
+                <label>[[user]]</label>
+            </button>
+    </div>
+</div>

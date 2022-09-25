@@ -1,0 +1,84 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chat Room</title>
+    <link rel="stylesheet" href="{{url_for('static', filename='css/styles.css')}}">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet">
+    {% block libs %}{% endblock %}
+</head>
+<body style="background-color: #FEF8ED">
+    <!-- Block for header -->
+    <div id="header" class="bg-dark text-light">
+        <div id="logo">
+            <div id="div-logo-img">
+                <img src="{{url_for('static', filename='images/chat.png')}}">
+            </div>
+            <label id="header-label">Beetroot Chat</label>
+        </div>
+        <div id="div-info">
+            <div>
+                <label>Information</label>
+                <img class="dropdown-arrow" src="{{url_for('static', filename='images/arrow-down.png')}}">
+            </div>
+            <div id="dropdown-info">
+                <p>Hi! You joined chat with graph visualisation!</p>
+                <p>
+                    Your messages to general chat will be stored in database. 
+                    But your private messages will be deleted if you exit, they 
+                    can be seen only by user who recieved it before they leave. 
+                    Then they will disapear at all.
+                </p>
+                <p>
+                    In this update one username can not used from different devices at same time.
+                    It helps secure private messages from uknown users. Also there was some small 
+                    fixes with session. Now people can not authorise in 2 different account in 
+                    one session.
+                </p>
+            </div>
+        </div>
+        {% block addButtons %}{% endblock %}
+    </div>
+    <!--  Main div -->
+
+    <div>
+        {% block mainPlace %}{% endblock %}
+    </div>
+
+    <!-- Block for bottom -->
+    <div id="bottom">
+        <div id="div-authors">
+            <label class="bottom-header">Authors</label>
+            <label id="first-author" class="bottom-label">Oleksii Voronin</label>
+        </div>
+        <div id="div-code">
+            <label class="bottom-header">Code</label>
+            <div>
+                <img src="{{url_for('static', filename='images/github.png')}}">
+                <a class="bottom-label" href="https://github.com/VoroninOl/Beetroot">https://github.com/VoroninOl/Beetroot</a>
+            </div>
+            <div>
+                <img src="{{url_for('static', filename='images/heroku.png')}}">
+                <a class="bottom-label" href="https://beetroot-task.herokuapp.com/">https://beetroot-task.herokuapp.com/</a>
+            </div>
+        </div>
+        <div id="div-contacts">
+            <label class="bottom-header">Contacts</label>
+            <div>
+                <img src="{{url_for('static', filename='images/gmail.png')}}">
+                <label class="bottom-label">rimlan1245@gmail.com</label>
+            </div>
+            <div>
+                <img src="{{url_for('static', filename='images/telegram.png')}}">
+                <label class="bottom-label">@Rimlan</label>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Importing JS scripts -->
+    {% block scripts %}{% endblock %}
+</body>
+</html>
+
